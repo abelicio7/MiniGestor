@@ -14,7 +14,264 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          type?: Database["public"]["Enums"]["transaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      debts: {
+        Row: {
+          created_at: string
+          creditor: string
+          due_day: number | null
+          id: string
+          monthly_payment: number | null
+          remaining_amount: number
+          status: Database["public"]["Enums"]["debt_status"]
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          creditor: string
+          due_day?: number | null
+          id?: string
+          monthly_payment?: number | null
+          remaining_amount: number
+          status?: Database["public"]["Enums"]["debt_status"]
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          creditor?: string
+          due_day?: number | null
+          id?: string
+          monthly_payment?: number | null
+          remaining_amount?: number
+          status?: Database["public"]["Enums"]["debt_status"]
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          created_at: string
+          current_amount: number
+          deadline: string | null
+          id: string
+          name: string
+          status: Database["public"]["Enums"]["goal_status"]
+          target_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          name: string
+          status?: Database["public"]["Enums"]["goal_status"]
+          target_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number
+          deadline?: string | null
+          id?: string
+          name?: string
+          status?: Database["public"]["Enums"]["goal_status"]
+          target_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          phone: string | null
+          plan: Database["public"]["Enums"]["user_plan"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id: string
+          name: string
+          phone?: string | null
+          plan?: Database["public"]["Enums"]["user_plan"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          plan?: Database["public"]["Enums"]["user_plan"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          date: string
+          essential: boolean
+          id: string
+          note: string | null
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          date?: string
+          essential?: boolean
+          id?: string
+          note?: string | null
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          date?: string
+          essential?: boolean
+          id?: string
+          note?: string | null
+          type?: Database["public"]["Enums"]["transaction_type"]
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          balance: number
+          color: string
+          created_at: string
+          id: string
+          name: string
+          type: Database["public"]["Enums"]["wallet_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          type: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          type?: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +280,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      debt_status: "active" | "paid" | "overdue"
+      goal_status: "active" | "completed"
+      transaction_type: "income" | "expense"
+      user_plan: "free" | "pro"
+      wallet_type: "cash" | "mobile" | "bank"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +411,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      debt_status: ["active", "paid", "overdue"],
+      goal_status: ["active", "completed"],
+      transaction_type: ["income", "expense"],
+      user_plan: ["free", "pro"],
+      wallet_type: ["cash", "mobile", "bank"],
+    },
   },
 } as const
