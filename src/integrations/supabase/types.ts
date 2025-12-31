@@ -145,27 +145,36 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          is_pro: boolean | null
           name: string
           phone: string | null
           plan: Database["public"]["Enums"]["user_plan"]
+          trial_end: string | null
+          trial_start: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           currency?: string
           id: string
+          is_pro?: boolean | null
           name: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["user_plan"]
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           currency?: string
           id?: string
+          is_pro?: boolean | null
           name?: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["user_plan"]
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -277,7 +286,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_trial_days_remaining: { Args: { user_id: string }; Returns: number }
+      has_full_access: { Args: { user_id: string }; Returns: boolean }
+      is_trial_active: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
       debt_status: "active" | "paid" | "overdue"
