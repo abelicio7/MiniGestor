@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Crown, Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
 
 interface UpgradeDialogProps {
   open: boolean;
@@ -26,11 +26,11 @@ const features = [
 ];
 
 const UpgradeDialog = ({ open, onOpenChange }: UpgradeDialogProps) => {
+  const navigate = useNavigate();
+
   const handleUpgrade = () => {
-    // TODO: Integrate with payment API
-    toast.info("Integração de pagamento em breve!", {
-      description: "Esta funcionalidade será ativada em breve.",
-    });
+    onOpenChange(false);
+    navigate("/checkout");
   };
 
   return (
