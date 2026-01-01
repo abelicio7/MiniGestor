@@ -67,8 +67,8 @@ serve(async (req: Request): Promise<Response> => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         grant_type: "client_credentials",
-        client_id: 9fa16fb1-6d57-4492-8330-577439e15598,
-        client_secret: J2b5zbMDzOA3C3mPFVl3qx12jVb3n2qcwDbQDZyA,
+        client_id: clientId,
+        client_secret: clientSecret,
       }),
     });
 
