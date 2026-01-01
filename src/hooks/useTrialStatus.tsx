@@ -6,6 +6,7 @@ import { Tables } from "@/integrations/supabase/types";
 type Profile = Tables<"profiles">;
 
 export type PlanStatus = "trial" | "pro" | "expired";
+export type PlanType = "monthly" | "lifetime" | "free";
 
 export interface TrialStatus {
   status: PlanStatus;
@@ -13,7 +14,10 @@ export interface TrialStatus {
   isTrialActive: boolean;
   hasFullAccess: boolean;
   isPro: boolean;
+  isLifetime: boolean;
+  planType: PlanType;
   trialEnd: Date | null;
+  subscriptionEnd: Date | null;
   loading: boolean;
 }
 
@@ -55,19 +59,45 @@ export const useTrialStatus = (profile: Profile | null): TrialStatus => {
         isTrialActive: true,
         hasFullAccess: true,
         isPro: false,
+        isLifetime: false,
+        planType: "free",
         trialEnd: null,
+        subscriptionEnd: null,
         loading,
       };
     }
 
-    const isPro = profile.plan === "pro" || profile.is_pro === true;
-    const trialEnd = profile.trial_end ? new Date(profile.trial_end) : null;
+    // Check for lifetime access - never expires
+    const isLifetime = (profile as any).is_lifetime === true;
+    
+    // Check subscription end for monthly plans
+    const subscriptionEnd = (profile as any).subscription_end 
+      ? new Date((profile as any).subscription_end) 
+      : null;
     const now = new Date();
+    const isSubscriptionActive = subscriptionEnd ? subscriptionEnd > now : false;
+    
+    // Pro status: lifetime OR active monthly subscription
+    const isPro = isLifetime || profile.is_pro === true || profile.plan === "pro";
+    
+    // Trial check
+    const trialEnd = profile.trial_end ? new Date(profile.trial_end) : null;
     const isTrialActive = trialEnd ? trialEnd > now : false;
-    const hasFullAccess = isPro || isTrialActive;
+    
+    // Full access: lifetime, active subscription, or active trial
+    const hasFullAccess = isLifetime || isSubscriptionActive || isPro || isTrialActive;
 
+    // Determine plan type
+    let planType: PlanType = "free";
+    if (isLifetime) {
+      planType = "lifetime";
+    } else if (isSubscriptionActive || (profile.plan === "pro" && !isLifetime)) {
+      planType = "monthly";
+    }
+
+    // Determine status
     let status: PlanStatus;
-    if (isPro) {
+    if (isLifetime || isPro || isSubscriptionActive) {
       status = "pro";
     } else if (isTrialActive) {
       status = "trial";
@@ -81,7 +111,10 @@ export const useTrialStatus = (profile: Profile | null): TrialStatus => {
       isTrialActive,
       hasFullAccess,
       isPro,
+      isLifetime,
+      planType,
       trialEnd,
+      subscriptionEnd,
       loading,
     };
   }, [profile, daysRemaining, loading]);

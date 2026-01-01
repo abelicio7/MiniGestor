@@ -1,30 +1,75 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth, ProtectedRoute } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Smartphone, Loader2, ArrowLeft, Crown, Check } from "lucide-react";
+import { Shield, Smartphone, Loader2, ArrowLeft, Crown, Check, Sparkles, Infinity } from "lucide-react";
 import { toast } from "sonner";
 
 type PaymentMethod = "mpesa" | "emola";
+type PlanType = "monthly" | "lifetime";
+
+interface Plan {
+  id: PlanType;
+  name: string;
+  price: number;
+  description: string;
+  badge?: string;
+  features: string[];
+}
+
+const plans: Plan[] = [
+  {
+    id: "monthly",
+    name: "Plano Mensal",
+    price: 199,
+    description: "Renovação mensal",
+    features: [
+      "Dashboard visual completo",
+      "Carteiras ilimitadas",
+      "Categorias personalizadas",
+      "Metas e alertas inteligentes",
+      "Histórico completo",
+      "Relatórios PDF/Excel",
+    ],
+  },
+  {
+    id: "lifetime",
+    name: "Plano Vitalício",
+    price: 599,
+    description: "Pague uma vez, use para sempre",
+    badge: "Melhor Valor",
+    features: [
+      "Tudo do plano mensal",
+      "Acesso vitalício garantido",
+      "Sem renovações",
+      "Todas as futuras atualizações",
+      "Suporte prioritário",
+      "Economize a longo prazo",
+    ],
+  },
+];
 
 const CheckoutContent = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState<PaymentMethod>("mpesa");
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>(
+    (searchParams.get("plan") as PlanType) || "lifetime"
+  );
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(10 * 60);
 
-  const price = 299;
+  const currentPlan = plans.find((p) => p.id === selectedPlan)!;
 
   useEffect(() => {
-    // Pre-fill email from user
     if (user?.email) {
       setEmail(user.email);
     }
@@ -82,7 +127,8 @@ const CheckoutContent = () => {
           email,
           phone,
           method,
-          amount: price,
+          amount: currentPlan.price,
+          planType: selectedPlan,
         },
       });
 
@@ -96,7 +142,9 @@ const CheckoutContent = () => {
 
       if (data.success && data.paymentSuccess) {
         toast.success("Pagamento confirmado!", {
-          description: "Seu Plano Pro foi ativado com sucesso.",
+          description: selectedPlan === "lifetime" 
+            ? "Seu Plano Vitalício foi ativado com sucesso." 
+            : "Seu Plano Mensal foi ativado com sucesso.",
         });
         navigate("/pagamento-confirmado");
       } else {
@@ -114,15 +162,6 @@ const CheckoutContent = () => {
     }
   };
 
-  const features = [
-    "Dashboard visual completo",
-    "Carteiras ilimitadas",
-    "Categorias personalizadas",
-    "Metas e alertas inteligentes",
-    "Histórico completo",
-    "Relatórios PDF/Excel",
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
@@ -130,7 +169,7 @@ const CheckoutContent = () => {
         Oferta expira em {formatTime(countdown)}
       </div>
 
-      <div className="container max-w-lg mx-auto px-4 py-6">
+      <div className="container max-w-2xl mx-auto px-4 py-6">
         {/* Back Button */}
         <Button
           variant="ghost"
@@ -140,6 +179,70 @@ const CheckoutContent = () => {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar ao Dashboard
         </Button>
+
+        {/* Plan Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {plans.map((plan) => (
+            <Card
+              key={plan.id}
+              className={`cursor-pointer transition-all relative ${
+                selectedPlan === plan.id
+                  ? "border-primary ring-2 ring-primary/20"
+                  : "border-border/50 hover:border-primary/50"
+              }`}
+              onClick={() => setSelectedPlan(plan.id)}
+            >
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    {plan.badge}
+                  </span>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {plan.id === "lifetime" ? (
+                      <Infinity className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Crown className="w-5 h-5 text-primary" />
+                    )}
+                    <CardTitle className="text-lg">{plan.name}</CardTitle>
+                  </div>
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      selectedPlan === plan.id
+                        ? "border-primary bg-primary"
+                        : "border-muted-foreground"
+                    }`}
+                  >
+                    {selectedPlan === plan.id && (
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    )}
+                  </div>
+                </div>
+                <p className="text-2xl font-bold text-primary">
+                  MT {plan.price},00
+                  <span className="text-sm font-normal text-muted-foreground">
+                    {plan.id === "monthly" ? "/mês" : ""}
+                  </span>
+                </p>
+                <p className="text-xs text-muted-foreground">{plan.description}</p>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <ul className="space-y-1">
+                  {plan.features.slice(0, 4).map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 text-xs">
+                      <Check className="w-3 h-3 text-success flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
         <Card className="border-border/50 shadow-xl">
           <CardHeader className="space-y-4">
@@ -155,35 +258,24 @@ const CheckoutContent = () => {
               </div>
             </div>
 
-            {/* Product Info */}
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                <Crown className="w-7 h-7 text-primary-foreground" />
+            {/* Selected Plan Info */}
+            <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+                {selectedPlan === "lifetime" ? (
+                  <Infinity className="w-6 h-6 text-primary-foreground" />
+                ) : (
+                  <Crown className="w-6 h-6 text-primary-foreground" />
+                )}
               </div>
-              <div>
-                <CardTitle className="text-lg">Plano Pro MiniGestor</CardTitle>
-                <p className="text-sm text-muted-foreground">Acesso vitalício</p>
-                <p className="text-xl font-bold text-primary">MT {price},00</p>
+              <div className="flex-1">
+                <p className="font-semibold">{currentPlan.name}</p>
+                <p className="text-sm text-muted-foreground">{currentPlan.description}</p>
               </div>
+              <p className="text-xl font-bold text-primary">MT {currentPlan.price},00</p>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {/* Features Preview */}
-            <div className="bg-muted/50 rounded-lg p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-3">
-                O que você vai desbloquear:
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2 text-xs">
-                    <Check className="w-3 h-3 text-success flex-shrink-0" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Form */}
             <div className="space-y-4">
               <div>
@@ -261,11 +353,22 @@ const CheckoutContent = () => {
             </div>
 
             {/* Price Summary */}
-            <div className="border-t border-border pt-4">
+            <div className="border-t border-border pt-4 space-y-2">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Plano Pro MiniGestor</span>
-                <span className="font-semibold">MT {price},00</span>
+                <span className="text-muted-foreground">{currentPlan.name}</span>
+                <span className="font-semibold">MT {currentPlan.price},00</span>
               </div>
+              {selectedPlan === "lifetime" && (
+                <p className="text-xs text-success flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  Acesso vitalício - nunca mais pague!
+                </p>
+              )}
+              {selectedPlan === "monthly" && (
+                <p className="text-xs text-muted-foreground">
+                  Renovação automática mensal
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -281,8 +384,12 @@ const CheckoutContent = () => {
                 </>
               ) : (
                 <>
-                  <Crown className="w-5 h-5 mr-2" />
-                  Ativar Plano Pro
+                  {selectedPlan === "lifetime" ? (
+                    <Infinity className="w-5 h-5 mr-2" />
+                  ) : (
+                    <Crown className="w-5 h-5 mr-2" />
+                  )}
+                  Ativar {currentPlan.name}
                 </>
               )}
             </Button>
