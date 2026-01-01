@@ -101,7 +101,7 @@ serve(async (req: Request): Promise<Response> => {
       body: new URLSearchParams({
         client_id: clientId,
         amount: amount.toString(),
-        reference: `minigestor-${userId}`,
+        reference: `mg-${userId.substring(0, 18)}`,
         phone: phone,
       }),
     });
