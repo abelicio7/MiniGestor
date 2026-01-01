@@ -145,10 +145,12 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          is_lifetime: boolean | null
           is_pro: boolean | null
           name: string
           phone: string | null
           plan: Database["public"]["Enums"]["user_plan"]
+          subscription_end: string | null
           trial_end: string | null
           trial_start: string | null
           updated_at: string
@@ -157,10 +159,12 @@ export type Database = {
           created_at?: string
           currency?: string
           id: string
+          is_lifetime?: boolean | null
           is_pro?: boolean | null
           name: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["user_plan"]
+          subscription_end?: string | null
           trial_end?: string | null
           trial_start?: string | null
           updated_at?: string
@@ -169,10 +173,12 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          is_lifetime?: boolean | null
           is_pro?: boolean | null
           name?: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["user_plan"]
+          subscription_end?: string | null
           trial_end?: string | null
           trial_start?: string | null
           updated_at?: string

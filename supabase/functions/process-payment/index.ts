@@ -14,6 +14,7 @@ interface PaymentRequest {
   phone: string;
   method: "mpesa" | "emola";
   amount: number;
+  planType: "monthly" | "lifetime";
 }
 
 serve(async (req: Request): Promise<Response> => {
@@ -23,12 +24,12 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { userId, name, email, phone, method, amount }: PaymentRequest = await req.json();
+    const { userId, name, email, phone, method, amount, planType }: PaymentRequest = await req.json();
 
-    console.log(`Processing payment for user ${userId}, method: ${method}, amount: ${amount}`);
+    console.log(`Processing ${planType} payment for user ${userId}, method: ${method}, amount: ${amount}`);
 
     // Validate required fields
-    if (!userId || !name || !email || !phone || !method || !amount) {
+    if (!userId || !name || !email || !phone || !method || !amount || !planType) {
       console.error("Missing required fields");
       return new Response(
         JSON.stringify({ success: false, error: "Campos obrigatórios em falta" }),
@@ -111,21 +112,38 @@ serve(async (req: Request): Promise<Response> => {
 
     // Check if payment was successful
     if (paymentResult.success && paymentResult.success.includes("sucesso")) {
-      console.log("Payment successful, updating user profile...");
+      console.log(`Payment successful, updating user profile to ${planType} plan...`);
 
       // Initialize Supabase client with service role
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-      // Update user profile to Pro
+      // Calculate subscription end for monthly plan (30 days from now)
+      const subscriptionEnd = planType === "monthly" 
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        : null;
+
+      // Update user profile based on plan type
+      const updateData = planType === "lifetime"
+        ? {
+            plan: "pro",
+            is_pro: true,
+            is_lifetime: true,
+            subscription_end: null,
+            updated_at: new Date().toISOString(),
+          }
+        : {
+            plan: "pro",
+            is_pro: true,
+            is_lifetime: false,
+            subscription_end: subscriptionEnd,
+            updated_at: new Date().toISOString(),
+          };
+
       const { error: updateError } = await supabase
         .from("profiles")
-        .update({
-          plan: "pro",
-          is_pro: true,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", userId);
 
       if (updateError) {
@@ -141,14 +159,19 @@ serve(async (req: Request): Promise<Response> => {
         );
       }
 
-      console.log("Profile updated successfully to Pro plan");
+      console.log(`Profile updated successfully to ${planType} plan`);
+
+      const message = planType === "lifetime"
+        ? "Pagamento confirmado! Plano Vitalício ativado com sucesso."
+        : "Pagamento confirmado! Plano Mensal ativado com sucesso.";
 
       return new Response(
         JSON.stringify({ 
           success: true, 
           paymentSuccess: true,
           profileUpdated: true,
-          message: "Pagamento confirmado! Plano Pro ativado com sucesso." 
+          planType: planType,
+          message: message
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
