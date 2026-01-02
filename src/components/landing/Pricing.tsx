@@ -2,34 +2,45 @@ import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
+const features = [
+  "Métodos ilimitados",
+  "Metas financeiras",
+  "Controle de dívidas",
+  "Histórico ilimitado",
+  "Relatórios em PDF",
+  "Análises inteligentes",
+];
+
 const plans = [
   {
     name: "Grátis",
     price: "0",
-    description: "Para começar a organizar suas finanças",
-    features: [
-      "1 método financeiro",
-      "Registrar entradas e saídas",
-      "Dashboard básica",
-      "Histórico de 30 dias",
-    ],
+    period: "por 30 dias",
+    description: "Experimente todas as funcionalidades",
+    features,
     cta: "Começar grátis",
     popular: false,
+    badge: null,
   },
   {
-    name: "Pro",
+    name: "Mensal",
     price: "199",
-    description: "Controle total das suas finanças",
-    features: [
-      "Métodos ilimitados",
-      "Metas financeiras",
-      "Controle de dívidas",
-      "Histórico ilimitado",
-      "Relatórios em PDF",
-      "Análises inteligentes",
-    ],
-    cta: "Assinar Pro",
+    period: "MZN/mês",
+    description: "Acesso completo com renovação mensal",
+    features,
+    cta: "Assinar Mensal",
     popular: true,
+    badge: "Mais popular",
+  },
+  {
+    name: "Vitalício",
+    price: "599",
+    period: "MZN único",
+    description: "Pague uma vez, use para sempre",
+    features,
+    cta: "Comprar Vitalício",
+    popular: false,
+    badge: "Melhor valor",
   },
 ];
 
@@ -46,7 +57,7 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <div
               key={index}
@@ -54,10 +65,10 @@ const Pricing = () => {
                 plan.popular ? "border-primary shadow-lg shadow-primary/10" : "border-border"
               }`}
             >
-              {plan.popular && (
+              {plan.badge && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                   <Sparkles className="w-3 h-3" />
-                  Mais popular
+                  {plan.badge}
                 </div>
               )}
 
@@ -65,7 +76,7 @@ const Pricing = () => {
                 <h3 className="text-xl font-bold text-foreground mb-2">{plan.name}</h3>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                  <span className="text-muted-foreground">MZN/mês</span>
+                  <span className="text-muted-foreground">{plan.period}</span>
                 </div>
                 <p className="text-muted-foreground text-sm mt-2">{plan.description}</p>
               </div>
