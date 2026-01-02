@@ -112,7 +112,7 @@ const DashboardContent = () => {
           message="Metas Financeiras"
           onUnlock={() => setUpgradeOpen(true)}
         >
-          <GoalsSection goals={goals} currency={currency} />
+          <GoalsSection goals={goals} currency={currency} onUpdate={refetch} />
         </LockedFeature>
       </main>
 
