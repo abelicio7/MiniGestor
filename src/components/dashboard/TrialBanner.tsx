@@ -1,4 +1,4 @@
-import { Clock, Crown, Lock, AlertTriangle, Infinity, CalendarDays } from "lucide-react";
+import { Clock, Crown, Lock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlanStatus } from "@/hooks/useTrialStatus";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +12,8 @@ interface TrialBannerProps {
 const TrialBanner = ({ status, daysRemaining, onUpgrade }: TrialBannerProps) => {
   const navigate = useNavigate();
 
-  const handlePlanSelect = (planType: "monthly" | "lifetime") => {
-    navigate(`/checkout?plan=${planType}`);
+  const handleViewPlans = () => {
+    navigate("/checkout");
   };
 
   if (status === "pro") {
@@ -37,7 +37,7 @@ const TrialBanner = ({ status, daysRemaining, onUpgrade }: TrialBannerProps) => 
   if (status === "expired") {
     return (
       <div className="bg-gradient-to-r from-destructive/20 to-destructive/10 border border-destructive/30 rounded-xl p-4">
-        <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
               <Lock className="w-5 h-5 text-destructive" />
@@ -49,23 +49,10 @@ const TrialBanner = ({ status, daysRemaining, onUpgrade }: TrialBannerProps) => 
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button 
-              onClick={() => handlePlanSelect("monthly")} 
-              variant="outline"
-              className="flex-1 min-w-[140px] border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-            >
-              <CalendarDays className="w-4 h-4 mr-2" />
-              Mensal - 199 MT
-            </Button>
-            <Button 
-              onClick={() => handlePlanSelect("lifetime")} 
-              className="flex-1 min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg"
-            >
-              <Infinity className="w-4 h-4 mr-2" />
-              Vitalício - 599 MT
-            </Button>
-          </div>
+          <Button onClick={handleViewPlans} className="bg-primary hover:bg-primary/90 shadow-lg">
+            <Crown className="w-4 h-4 mr-2" />
+            Ver Planos
+          </Button>
         </div>
       </div>
     );
@@ -82,53 +69,43 @@ const TrialBanner = ({ status, daysRemaining, onUpgrade }: TrialBannerProps) => 
           : "from-info/20 to-info/10 border-info/30"
       } border rounded-xl p-4`}
     >
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-full ${
-                isUrgent ? "bg-warning/20" : "bg-info/20"
-              } flex items-center justify-center`}
-            >
-              {isUrgent ? (
-                <AlertTriangle className={`w-5 h-5 text-warning`} />
-              ) : (
-                <Clock className={`w-5 h-5 text-info`} />
-              )}
-            </div>
-            <div>
-              <p className="font-semibold text-foreground">
-                {isUrgent ? "Seu trial está acabando!" : "Teste Gratuito"}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {daysRemaining === 1
-                  ? "Resta 1 dia para aproveitar todos os recursos do MiniGestor."
-                  : `Restam ${daysRemaining} dias para aproveitar todos os recursos do MiniGestor.`}
-              </p>
-            </div>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-10 h-10 rounded-full ${
+              isUrgent ? "bg-warning/20" : "bg-info/20"
+            } flex items-center justify-center`}
+          >
+            {isUrgent ? (
+              <AlertTriangle className={`w-5 h-5 text-warning`} />
+            ) : (
+              <Clock className={`w-5 h-5 text-info`} />
+            )}
           </div>
+          <div>
+            <p className="font-semibold text-foreground">
+              {isUrgent ? "Seu trial está acabando!" : "Teste Gratuito"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {daysRemaining === 1
+                ? "Resta 1 dia para aproveitar todos os recursos do MiniGestor."
+                : `Restam ${daysRemaining} dias para aproveitar todos os recursos do MiniGestor.`}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block">
             <p className="text-2xl font-bold text-foreground">{daysRemaining}</p>
             <p className="text-xs text-muted-foreground">
               {daysRemaining === 1 ? "dia restante" : "dias restantes"}
             </p>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button 
-            onClick={() => handlePlanSelect("monthly")} 
+          <Button
             variant="outline"
-            className="flex-1 min-w-[140px] border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            onClick={handleViewPlans}
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
           >
-            <CalendarDays className="w-4 h-4 mr-2" />
-            Mensal - 199 MT
-          </Button>
-          <Button 
-            onClick={() => handlePlanSelect("lifetime")} 
-            className="flex-1 min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg"
-          >
-            <Infinity className="w-4 h-4 mr-2" />
-            Vitalício - 599 MT
+            Ver Planos
           </Button>
         </div>
       </div>
