@@ -8,6 +8,7 @@ import WalletCards from "@/components/dashboard/WalletCards";
 import ExpenseChart from "@/components/dashboard/ExpenseChart";
 import IncomeExpenseChart from "@/components/dashboard/IncomeExpenseChart";
 import GoalsSection from "@/components/dashboard/GoalsSection";
+import { DebtsSection } from "@/components/dashboard/DebtsSection";
 import AlertsSection from "@/components/dashboard/AlertsSection";
 import FloatingActionButton from "@/components/dashboard/FloatingActionButton";
 import TrialBanner from "@/components/dashboard/TrialBanner";
@@ -24,6 +25,7 @@ const DashboardContent = () => {
     transactions,
     categories,
     goals,
+    debts,
     totalBalance,
     monthlyIncome,
     monthlyExpenses,
@@ -113,6 +115,15 @@ const DashboardContent = () => {
           onUnlock={() => setUpgradeOpen(true)}
         >
           <GoalsSection goals={goals} currency={currency} onUpdate={refetch} />
+        </LockedFeature>
+
+        {/* Debts */}
+        <LockedFeature
+          isLocked={!hasFullAccess}
+          message="Gestão de Dívidas"
+          onUnlock={() => setUpgradeOpen(true)}
+        >
+          <DebtsSection debts={debts} onUpdate={refetch} />
         </LockedFeature>
       </main>
 
