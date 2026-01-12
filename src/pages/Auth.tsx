@@ -324,7 +324,7 @@ const Auth = () => {
                   />
                 </svg>
               )}
-              Google
+              Continuar com Google
             </Button>
           </form>
 
