@@ -10,6 +10,7 @@ import IncomeExpenseChart from "@/components/dashboard/IncomeExpenseChart";
 import GoalsSection from "@/components/dashboard/GoalsSection";
 import { DebtsSection } from "@/components/dashboard/DebtsSection";
 import AlertsSection from "@/components/dashboard/AlertsSection";
+import ExpensesList from "@/components/dashboard/ExpensesList";
 import FloatingActionButton from "@/components/dashboard/FloatingActionButton";
 import TrialBanner from "@/components/dashboard/TrialBanner";
 import UpgradeDialog from "@/components/dashboard/UpgradeDialog";
@@ -107,6 +108,13 @@ const DashboardContent = () => {
             />
           </LockedFeature>
         </div>
+
+        {/* Expenses List */}
+        <ExpensesList
+          transactions={transactions}
+          categories={categories}
+          currency={currency}
+        />
 
         {/* Goals */}
         <LockedFeature
