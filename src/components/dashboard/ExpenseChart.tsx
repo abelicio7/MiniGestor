@@ -12,13 +12,13 @@ interface ExpenseChartProps {
 }
 
 const COLORS = [
-  "hsl(160, 84%, 39%)", // primary
-  "hsl(217, 91%, 60%)", // secondary
-  "hsl(38, 92%, 50%)",  // warning
-  "hsl(271, 91%, 60%)", // purple
+  "hsl(160, 84%, 39%)", // primary green
+  "hsl(217, 91%, 60%)", // secondary blue
+  "hsl(38, 92%, 50%)",  // warning orange
+  "hsl(175, 80%, 45%)", // teal green
   "hsl(0, 84%, 60%)",   // red
-  "hsl(180, 70%, 45%)", // cyan
-  "hsl(340, 80%, 55%)", // pink
+  "hsl(145, 70%, 45%)", // lime green
+  "hsl(190, 70%, 50%)", // cyan
   "hsl(45, 90%, 55%)",  // yellow
 ];
 
