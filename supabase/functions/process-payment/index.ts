@@ -14,7 +14,7 @@ interface PaymentRequest {
   phone: string;
   method: "mpesa" | "emola";
   amount: number;
-  planType: "monthly" | "lifetime";
+  planType: "monthly" | "annual";
 }
 
 serve(async (req: Request): Promise<Response> => {
@@ -119,18 +119,18 @@ serve(async (req: Request): Promise<Response> => {
       const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-      // Calculate subscription end for monthly plan (30 days from now)
+      // Calculate subscription end based on plan type
       const subscriptionEnd = planType === "monthly" 
         ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-        : null;
+        : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
 
       // Update user profile based on plan type
-      const updateData = planType === "lifetime"
+      const updateData = planType === "annual"
         ? {
             plan: "pro",
             is_pro: true,
             is_lifetime: true,
-            subscription_end: null,
+            subscription_end: subscriptionEnd,
             updated_at: new Date().toISOString(),
           }
         : {
@@ -161,8 +161,8 @@ serve(async (req: Request): Promise<Response> => {
 
       console.log(`Profile updated successfully to ${planType} plan`);
 
-      const message = planType === "lifetime"
-        ? "Pagamento confirmado! Plano Vitalício ativado com sucesso."
+      const message = planType === "annual"
+        ? "Pagamento confirmado! Plano Anual ativado com sucesso."
         : "Pagamento confirmado! Plano Mensal ativado com sucesso.";
 
       return new Response(
