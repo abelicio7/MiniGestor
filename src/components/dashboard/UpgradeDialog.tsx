@@ -49,7 +49,7 @@ const UpgradeDialog = ({ open, onOpenChange }: UpgradeDialogProps) => {
         <div className="py-6">
           <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20">
             <div className="flex items-baseline justify-center gap-1 mb-6">
-              <span className="text-4xl font-bold text-foreground">MT 299</span>
+              <span className="text-4xl font-bold text-foreground">MT 99</span>
               <span className="text-muted-foreground">/mês</span>
             </div>
 

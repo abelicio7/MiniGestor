@@ -6,7 +6,7 @@ import { Tables } from "@/integrations/supabase/types";
 type Profile = Tables<"profiles">;
 
 export type PlanStatus = "trial" | "pro" | "expired";
-export type PlanType = "monthly" | "lifetime" | "free";
+export type PlanType = "monthly" | "annual" | "free";
 
 export interface TrialStatus {
   status: PlanStatus;
@@ -67,30 +67,32 @@ export const useTrialStatus = (profile: Profile | null): TrialStatus => {
       };
     }
 
-    // Check for lifetime access - never expires
+    const now = new Date();
+
+    // Check for annual/lifetime access
     const isLifetime = (profile as any).is_lifetime === true;
     
-    // Check subscription end for monthly plans
+    // Check subscription end for monthly/annual plans
     const subscriptionEnd = (profile as any).subscription_end 
       ? new Date((profile as any).subscription_end) 
       : null;
-    const now = new Date();
+    
     const isSubscriptionActive = subscriptionEnd ? subscriptionEnd > now : false;
     
-    // Pro status: lifetime OR active monthly subscription
+    // Pro status: annual/lifetime OR active monthly subscription
     const isPro = isLifetime || profile.is_pro === true || profile.plan === "pro";
     
     // Trial check
     const trialEnd = profile.trial_end ? new Date(profile.trial_end) : null;
     const isTrialActive = trialEnd ? trialEnd > now : false;
     
-    // Full access: lifetime, active subscription, or active trial
+    // Full access: annual, active subscription, or active trial
     const hasFullAccess = isLifetime || isSubscriptionActive || isPro || isTrialActive;
 
     // Determine plan type
     let planType: PlanType = "free";
     if (isLifetime) {
-      planType = "lifetime";
+      planType = "annual";
     } else if (isSubscriptionActive || (profile.plan === "pro" && !isLifetime)) {
       planType = "monthly";
     }

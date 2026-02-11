@@ -10,7 +10,7 @@ import { Shield, Smartphone, Loader2, ArrowLeft, Crown, Check, Sparkles, Infinit
 import { toast } from "sonner";
 
 type PaymentMethod = "mpesa" | "emola";
-type PlanType = "monthly" | "lifetime";
+type PlanType = "monthly" | "annual";
 
 interface Plan {
   id: PlanType;
@@ -25,7 +25,7 @@ const plans: Plan[] = [
   {
     id: "monthly",
     name: "Plano Mensal",
-    price: 199,
+    price: 99,
     description: "Renovação mensal",
     features: [
       "Dashboard visual completo",
@@ -37,18 +37,18 @@ const plans: Plan[] = [
     ],
   },
   {
-    id: "lifetime",
-    name: "Plano Vitalício",
+    id: "annual",
+    name: "Plano Anual",
     price: 599,
-    description: "Pague uma vez, use para sempre",
+    description: "Pague uma vez por ano e economize",
     badge: "Melhor Valor",
     features: [
       "Tudo do plano mensal",
-      "Acesso vitalício garantido",
-      "Sem renovações",
+      "Acesso por 12 meses",
+      "Economize vs mensal",
       "Todas as futuras atualizações",
       "Suporte prioritário",
-      "Economize a longo prazo",
+      "Melhor custo-benefício",
     ],
   },
 ];
@@ -62,7 +62,7 @@ const CheckoutContent = () => {
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState<PaymentMethod>("mpesa");
   const [selectedPlan, setSelectedPlan] = useState<PlanType>(
-    (searchParams.get("plan") as PlanType) || "lifetime"
+    (searchParams.get("plan") as PlanType) || "annual"
   );
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(10 * 60);
@@ -142,8 +142,8 @@ const CheckoutContent = () => {
 
       if (data.success && data.paymentSuccess) {
         toast.success("Pagamento confirmado!", {
-          description: selectedPlan === "lifetime" 
-            ? "Seu Plano Vitalício foi ativado com sucesso." 
+          description: selectedPlan === "annual" 
+            ? "Seu Plano Anual foi ativado com sucesso." 
             : "Seu Plano Mensal foi ativado com sucesso.",
         });
         navigate("/pagamento-confirmado");
@@ -203,8 +203,8 @@ const CheckoutContent = () => {
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {plan.id === "lifetime" ? (
-                      <Infinity className="w-5 h-5 text-primary" />
+                    {plan.id === "annual" ? (
+                      <Crown className="w-5 h-5 text-primary" />
                     ) : (
                       <Crown className="w-5 h-5 text-primary" />
                     )}
@@ -225,7 +225,7 @@ const CheckoutContent = () => {
                 <p className="text-2xl font-bold text-primary">
                   MT {plan.price},00
                   <span className="text-sm font-normal text-muted-foreground">
-                    {plan.id === "monthly" ? "/mês" : ""}
+                    {plan.id === "monthly" ? "/mês" : "/ano"}
                   </span>
                 </p>
                 <p className="text-xs text-muted-foreground">{plan.description}</p>
@@ -261,8 +261,8 @@ const CheckoutContent = () => {
             {/* Selected Plan Info */}
             <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                {selectedPlan === "lifetime" ? (
-                  <Infinity className="w-6 h-6 text-primary-foreground" />
+                {selectedPlan === "annual" ? (
+                  <Crown className="w-6 h-6 text-primary-foreground" />
                 ) : (
                   <Crown className="w-6 h-6 text-primary-foreground" />
                 )}
@@ -358,10 +358,10 @@ const CheckoutContent = () => {
                 <span className="text-muted-foreground">{currentPlan.name}</span>
                 <span className="font-semibold">MT {currentPlan.price},00</span>
               </div>
-              {selectedPlan === "lifetime" && (
+              {selectedPlan === "annual" && (
                 <p className="text-xs text-success flex items-center gap-1">
                   <Check className="w-3 h-3" />
-                  Acesso vitalício - nunca mais pague!
+                  Acesso por 12 meses — economize vs mensal!
                 </p>
               )}
               {selectedPlan === "monthly" && (
@@ -384,8 +384,8 @@ const CheckoutContent = () => {
                 </>
               ) : (
                 <>
-                  {selectedPlan === "lifetime" ? (
-                    <Infinity className="w-5 h-5 mr-2" />
+                  {selectedPlan === "annual" ? (
+                    <Crown className="w-5 h-5 mr-2" />
                   ) : (
                     <Crown className="w-5 h-5 mr-2" />
                   )}

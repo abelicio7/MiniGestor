@@ -46,7 +46,7 @@ const PaymentConfirmedContent = () => {
             </div>
             <div className="text-left">
               <p className="font-semibold text-foreground">MiniGestor Pro</p>
-              <p className="text-sm text-muted-foreground">Acesso vitalício ativado</p>
+              <p className="text-sm text-muted-foreground">Plano Pro ativado com sucesso</p>
             </div>
           </div>
 
