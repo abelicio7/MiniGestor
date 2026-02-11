@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import Checkout from "./pages/Checkout";
 import PaymentConfirmed from "./pages/PaymentConfirmed";
 import NotFound from "./pages/NotFound";
+import Termos from "./pages/Termos";
+import Privacidade from "./pages/Privacidade";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/pagamento-confirmado" element={<PaymentConfirmed />} />
+              <Route path="/termos" element={<Termos />} />
+              <Route path="/privacidade" element={<Privacidade />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
